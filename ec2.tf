@@ -12,7 +12,7 @@ resource "aws_instance" "web" {
   }
 
   provisioner "local-exec" {
-    command = "echo ${self.private_ip} > inventory" # self = aws_instance.web
+    command = "echo ${self.private_ip} > inventory" # self = aws_instance.web ; this IP address will be stored in inventory ; local exec wil only run one time,so destroy and then try  
   }
 
   # provisioner "local-exec" {
@@ -20,7 +20,7 @@ resource "aws_instance" "web" {
   # }
 
   provisioner "local-exec" {
-    when = destroy
+    when = destroy     # it is a keyword
     command = "echo this will execute at the time of destroy, you can trigger other system like email and sending alerts" # self = aws_instance.web
   }
 
@@ -29,11 +29,11 @@ resource "aws_instance" "web" {
     user     = "centos"
     password = "DevOps321"
     host     = self.public_ip
-  }
+  }        # connection is for remote exec
 
   provisioner "remote-exec" {
     inline = [
-      "echo 'this is from remote exec' > /tmp/remote.txt",
+      "echo 'this is from remote exec' > /tmp/remote.txt",  # this command will run inside the server and save it in tmp/remote.txt, generally this will be useful when you want to install like sudo
       "sudo yum install nginx -y",
       "sudo systemctl start nginx"
     ]
