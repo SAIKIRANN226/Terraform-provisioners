@@ -8,11 +8,11 @@ resource "aws_instance" "web" {
   }
 
   provisioner "local-exec" {
-    command = "echo this will execute at the time of creation, you can trigger other system like email and sending alerts" # self = aws_instance.web
+    command = "echo this will execute at the time of creation, you can trigger other system like email and sending alerts"
   }
 
   provisioner "local-exec" {
-    command = "echo ${self.private_ip} > inventory" # self = aws_instance.web ; this IP address will be stored in inventory ; local exec wil only run one time,so destroy and then try  
+    command = "echo ${self.private_ip} > inventory" # self is a keyword which provisioners will unable that means instead of using "aws_instance.web.private_ip" so now it is in with in the resource so we can use self keyword that is , self = aws_instance.web ; this IP address will be stored in inventory ; local exec wil only run one time,so destroy and then try
   }
 
   # provisioner "local-exec" {
@@ -33,7 +33,7 @@ resource "aws_instance" "web" {
 
   provisioner "remote-exec" {
     inline = [
-      "echo 'this is from remote exec' > /tmp/remote.txt",  # this command will run inside the server and save it in tmp/remote.txt, generally this will be useful when you want to install like sudo
+      "echo 'this is from remote exec' > /tmp/remote.txt",  # this command will run inside the server and save it in tmp/remote.txt, generally this will be useful when you want to install like sudo commands or other commands also if you want
       "sudo yum install nginx -y",
       "sudo systemctl start nginx"
     ]
