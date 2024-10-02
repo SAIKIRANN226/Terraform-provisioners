@@ -11,7 +11,7 @@ resource "aws_instance" "web" {
   }
 
   provisioner "local-exec" {
-    command = "echo ${self.private_ip} > inventory" # self is a keyword which provisioners will unable that means instead of using "aws_instance.web.private_ip" so now it is in with in the resource so we can use self keyword that is , self = aws_instance.web ; this IP address will be stored in inventory ; local exec wil only run one time,so destroy and then try.so what terraform will do? terraform will run command which is in local-exec as soon as after creation of instance and it will print the server ip address which is private_ip,so provisioners are useful to integrate terraform with configuration management tools like ansible.
+    command = "echo ${self.private_ip} > inventory" # self is a keyword which provisioners will unable that means instead of using "aws_instance.web.private_ip" so now it is in with in the resource so we can use self keyword that is , self = aws_instance.web ; this IP address will be stored in inventory ; local exec will only run one time,so destroy and then try.so what terraform will do? terraform will run this command which is in local-exec as soon as after creation of instance and it will print the server ip address which is private_ip,so provisioners are useful to integrate terraform with configuration management tools like ansible.
   }
 
   # provisioner "local-exec" {
