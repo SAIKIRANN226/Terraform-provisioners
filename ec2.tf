@@ -1,5 +1,5 @@
 resource "aws_instance" "web" {
-  ami           = "ami-03265a0778a880afb" #devops-practice
+  ami           = "ami-03265a0778a880afb"
   instance_type = "t2.micro"
   vpc_security_group_ids = [aws_security_group.roboshop-all.id]
   tags = {
@@ -8,22 +8,22 @@ resource "aws_instance" "web" {
 
   provisioner "local-exec" {
     command = "echo this will execute at the time of creation, you can trigger other system like email and sending alerts"
-  }
+  } # The above is just a provisioner block
 
   provisioner "local-exec" {
-    command = "echo ${self.private_ip} > inventory" # self is a keyword which provisioners will unable that means instead of using "aws_instance.web.private_ip" so now it is in with in the resource so we can use self keyword that is , self = aws_instance.web ; this IP address will be stored in inventory ; local exec will only run one time,so destroy and then try.so what terraform will do? terraform will run this command which is in local-exec as soon as after creation of instance and it will print the server ip address which is private_ip,so provisioners are useful to integrate terraform with configuration management tools like ansible.
+    command = "echo ${self.private_ip} > inventory" # Self is a keyword which provisioners will unable that means instead of using "aws_instance.web.private_ip" so now it is with in the resource so we can use self keyword that is , self = aws_instance.web ; this IP address will be stored in inventory ; local exec will only run one time, to run again we need to destroy and then try. so what terraform will do? terraform will run this command which is in local-exec as soon as after creation of instance and it will print the server ip address which is private_ip, so provisioners are useful to integrate terraform with configuration management tools like ansible to get end-end automation
   }
 
   # provisioner "local-exec" {
   #   command = "ansible-playbook -i inventory web.yaml" # self = aws_instance.web
-  # } this is used to integrate terraform and ansible it will be used in roboshop project
+  # } This is used to integrate terraform and ansible it will be used in roboshop project
 
-  provisioner "local-exec" { # it is for local exec
-    when = destroy     # it is a keyword
-    command = "echo this will execute at the time of destroy, you can trigger other system like email and sending alerts" # self = aws_instance.web
+  provisioner "local-exec" { # It is for local exec
+    when = destroy     # It is a keyword
+    command = "echo this will execute at the time of destroy, you can trigger other system like email and sending alerts"
   }
 
-  connection { # connection is for remote exec
+  connection { # This block is to connect to remote servers nothing but remote exec
     type     = "ssh"
     user     = "centos"
     password = "DevOps321"
@@ -32,14 +32,14 @@ resource "aws_instance" "web" {
 
   provisioner "remote-exec" {
     inline = [
-      "echo 'this is from remote exec' > /tmp/remote.txt",  # this command will run inside the server and save it in tmp/remote.txt, generally this will be useful when you want to install like sudo commands or other commands also if you want
+      "echo 'this is from remote exec' > /tmp/remote.txt",  # After successful connection to the remote instance then this command will run inside the server and save it in tmp/remote.txt, generally this will be useful when you want to install like sudo commands or other commands also if you want
       "sudo yum install nginx -y",
       "sudo systemctl start nginx"
     ]
   }
 }
 
-resource "aws_security_group" "roboshop-all" { # we need securitygroup for secure connection which is ssh 22 to connect to remote-exec
+resource "aws_security_group" "roboshop-all" { # We need securitygroup for secure connection which is ssh 22 to connect to remote-exec
     name        = "provisioner"
 
     ingress {
@@ -51,7 +51,7 @@ resource "aws_security_group" "roboshop-all" { # we need securitygroup for secur
     }
 
     ingress {
-        description      = "Allow All ports"
+        description      = "Allow All ports" # Why we added this rule 80 because we installed nginx in remote machine which is in line 36
         from_port        = 80 
         to_port          = 80 
         protocol         = "tcp"
