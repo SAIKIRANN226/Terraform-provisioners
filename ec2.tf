@@ -8,22 +8,22 @@ resource "aws_instance" "web" {
 
   provisioner "local-exec" {
     command = "echo this will execute at the time of creation, you can trigger other system like send email and alerts"
-  } # The above is just a provisioner block example
+  } # The above is just a provisioner syntax block example.
 
   provisioner "local-exec" {
-    command = "echo ${self.private_ip} > inventory" # Self is a keyword which provisioners will unable that means instead of using "aws_instance.web.private_ip" so now it is with in the resource so we can use self keyword that is , self = aws_instance.web ; this IP address will be stored in inventory ; local exec will only run one time, to run again we need to destroy and then try. so what terraform will do? terraform will run this command which is in local-exec as soon as after creation of instance and it will print the server ip address which is private_ip, so provisioners are useful to integrate terraform with configuration management tools like ansible to get end-end automation
+    command = "echo ${self.private_ip} > inventory" # Self is a keyword which provisioners will unable, that means instead of using "aws_instance.web.private_ip". So now it is with in the resource and we can use self keyword that is, self = aws_instance.web ; this IP_address will be stored in inventory ; local exec will only run one time, to run again we need to destroy and then try. So what terraform will do ? terraform will run this command which is in local-exec as soon as after creation of instance and it will print the server ip_address which is private_ip, so provisioners are useful to integrate terraform with configuration management tools like ansible to get end-end automation.
   }
 
   # provisioner "local-exec" {
   #   command = "ansible-playbook -i inventory web.yaml" # self = aws_instance.web
-  # } This is used to integrate terraform and ansible it will be used in roboshop project
+  # } This is used to integrate terraform and ansible it will be used in roboshop project later.
 
   provisioner "local-exec" { # It is for local exec
     when = destroy     # It is a keyword
     command = "echo this will execute at the time of destroy, you can trigger other system like email and sending alerts"
   }
 
-  connection { # This block is to connect to remote servers nothing but remote exec
+  connection { # This block is to connect to remote servers which is remote exec.
     type     = "ssh"
     user     = "centos"
     password = "DevOps321"
@@ -32,7 +32,7 @@ resource "aws_instance" "web" {
 
   provisioner "remote-exec" {
     inline = [
-      "echo 'this is from remote exec' > /tmp/remote.txt",  # After successful connection to the remote instance then this command will run inside the server and save it in tmp/remote.txt, generally this will be useful when you want to install like sudo commands or other commands also if you want
+      "echo 'this is from remote exec' > /tmp/remote.txt",  # After successful connection to the remote instance then this command will run inside the server and save it in tmp/remote.txt, generally this will be useful when you want to install like sudo commands or other commands also if you want.
       "sudo yum install nginx -y",
       "sudo systemctl start nginx"
     ]
